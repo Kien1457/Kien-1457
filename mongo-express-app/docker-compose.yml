@@ -1,0 +1,31 @@
+services:
+  # MongoDB service
+  mongo:
+    image: mongo:7.0
+    container_name: mongo-imageapp
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: imageapp
+
+  # Node.js App service
+  app:
+    build: .
+    container_name: imageapp-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env.docker
+    depends_on:
+      - mongo
+    volumes:
+      - ./uploads:/app/uploads
+    environment:
+      NODE_ENV: production
+
+volumes:
+  mongo_data:
